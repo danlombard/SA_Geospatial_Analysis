@@ -1,0 +1,167 @@
+
+
+
+
+```{r}
+library(tidyverse)
+library(googlesheets)
+library(rmapshaper)
+library(rvest)
+library(sf)
+library(sp)
+library(GADMTools)
+```
+
+```{r}
+my_sf <- st_read("gadm36_ZAF_shp/gadm36_ZAF_1.shp")
+```
+
+
+
+
+prov <- c("Free State", "Gauteng", "Western Cape", "Northern Cape", "Mpumalanga", "KwaZulu-Natal", "Eastern Cape", "Limpopo")
+
+
+
+```{r}
+#sa_wrapper = gadm_sf.loadCountries("ZAF", level = 1, basefile = "./")
+
+my_spdf = as(my_sf, "Spatial")
+class(my_spdf)
+
+str(my_spdf, max.level = 2)
+
+glimpse(my_spdf@data)
+```
+
+
+```{r}
+
+sa_sf = st_as_sf(my_spdf)
+class(sa_sf)
+```
+
+
+```{r}
+head(sa_sf, 4)
+```
+
+```{r}
+glimpse(sa_sf)
+```
+
+```{r}
+x <- readRDS("ZAF_adm1.sf.rds")
+
+```
+
+```{r}
+library(rmapshaper)
+simp_sf <- ms_simplify(sa_sf, keep = 0.01, keep_shapes = TRUE)
+simple_geometry <- st_geometry(simp_sf)
+
+plot(simple_geometry, main = "South Africa")
+```
+
+```{r}
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(units)
+library(lwgeom)
+library(dplyr)
+
+
+attributes_df <- readRDS('attributes.rds')
+
+sa_sf1 <- sa_sf1 %>%
+  rename(
+    prov = NAME_1
+  )
+
+sa_sf1 <- sa_sf1 %>%
+  left_join(attributes_df, by = 'prov')
+
+
+
+```
+
+```{r}
+sa_attributes <- saveRDS(sa_sf, "sa_attributes.rds")
+```
+
+```{r}
+
+simp_sa_sf <- ms_simplify(sa_sf, keep = 0.01, keep_shapes = TRUE)
+
+saveRDS(simp_sa_sf, "sa_attributes.rds")
+
+
+```
+
+```{r}
+library(tidyverse)
+library(sf)
+
+
+plot(sa_sf["pop_2011.x"])
+
+
+```
+
+```{r}
+library(tmap)
+sa_sf %>%
+  tm_shape() +
+  tm_fill(col = "pop_2011.x", title = "No. People") + 
+  tm_borders(lwd = 0.1) +
+  tm_text("prov", size = 0.5) +
+  tm_style("gray") +
+  tm_layout(
+    main.title = "Population (2011)",
+    main.title.position = c("center"),
+    main.title.size = 1,
+    legend.position = c("right", "bottom")
+  ) +
+  tm_credits("Data:\n2011 Census", position = c("left", "bottom"))
+```
+
+```{r}
+sa_sf_shiny <- saveRDS(sa_sf, "attributes_shiny.rds")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+ind_sf <- ind_sf %>%
+  mutate(my_area = as.vector(my_area), 
+         gdp_density_usd_km2 = as.vector(gdp_density_usd_km2))
+
+original_geometry <- st_geometry(ind_sf)
+
+library(rmapshaper)
+simp_sf <- ms_simplify(ind_sf, keep = 0.01, keep_shapes = TRUE)
+simple_geometry <- st_geometry(simp_sf)
+
+par(mfrow = c(1,2))
+plot(original_geometry, main = "Original Geometry")
+plot(simple_geometry, main = "Simple Geometry")
+
+
